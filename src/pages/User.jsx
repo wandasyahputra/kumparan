@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Button from 'commons/ui-kit/Button'
+import User from 'modules/User'
 
 const Home = () => {
   const Content = styled.div`
@@ -9,8 +9,7 @@ const Home = () => {
   `
   return (
     <Content>
-      Hello World
-      <Button primary>Hehe</Button>
+      <User />
     </Content>
   )
 }
