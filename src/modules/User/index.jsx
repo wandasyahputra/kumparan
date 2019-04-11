@@ -103,7 +103,6 @@ class User extends Component {
     console.log(userList)
     return (
       <React.Fragment>
-        <div onClick={this.openPostPage(1)}>kick</div>
         {userList.map((item, key) => (
           <Card
             key={key}
