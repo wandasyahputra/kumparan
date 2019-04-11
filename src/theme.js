@@ -11,8 +11,8 @@ const gray = '#9b9d9f'
 const theme = {
   primaryColor: blue,
   primaryColorTrans: 'rgba(1, 134, 213, 0.6)',
-  primaryBackground: black,
-  primaryTextColor: white,
+  primaryBackground: white,
+  primaryTextColor: black,
   secondaryTextColor: gray,
   headingTextColor: blue,
 

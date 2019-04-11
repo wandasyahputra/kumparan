@@ -5,9 +5,9 @@ const Container = styled.div`
   font-size: 13px;
   font-weight: 400;
   width: ${props => props.width || '250px'};
-  margin: 7px;
-  height: ${props => props.height || '60px'};
-  padding: 0 ${props => props.padding || '16px'};
+  margin: ${props => props.margin || '7px'};
+  min-height: ${props => props.height || '60px'};
+  padding: 10px ${props => props.padding || '16px'};
   color: ${props => props.theme.primaryTextColor};
   background-color: ${props => props.theme.primaryBackground};
   border: solid 0.5px ${props => props.theme.primaryBackground};
@@ -15,12 +15,16 @@ const Container = styled.div`
   border-radius: 4px;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.5);
   transition: 0.2s;
   
   :hover {
     box-shadow: 0 0 5px 0 ${props => props.theme.primaryColorTrans};
     border: solid 0.5px ${props => props.theme.primaryColor};
+  }
+
+  & .title {
+    font-size: 20px;
   }
 `
 

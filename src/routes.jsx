@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import Home from 'pages/Home'
 import User from 'pages/User'
+import Post from 'pages/Post'
 
 const Container = styled.div`
   height: 100vh;
@@ -19,6 +20,7 @@ const Routes = () => (
         <Switch>
           <Route exact path="/home" component={Home} />
           <Route exact path="/user" component={User} />
+          <Route exact path="/post/:userid" component={Post} />
           <Redirect to="/home" />
         </Switch>
       </Container>
