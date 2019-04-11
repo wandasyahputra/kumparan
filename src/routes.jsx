@@ -4,7 +4,6 @@ import {
 } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Home from 'pages/Home'
 import User from 'pages/User'
 import Post from 'pages/Post'
 
@@ -18,10 +17,9 @@ const Routes = () => (
     <React.Fragment>
       <Container>
         <Switch>
-          <Route exact path="/home" component={Home} />
           <Route exact path="/user" component={User} />
           <Route exact path="/post/:userid" component={Post} />
-          <Redirect to="/home" />
+          <Redirect to="/user" />
         </Switch>
       </Container>
     </React.Fragment>
