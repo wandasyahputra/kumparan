@@ -1,17 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Users from 'modules/User'
+import Posts from 'modules/Post'
 
-const User = () => {
+const Post = (props) => {
   const Content = styled.div`
     color: ${props => props.theme.primaryTextColor};
   `
   return (
     <Content>
-      <Users />
+      <Posts userId={props.match.params.userid} />
     </Content>
   )
 }
 
-export default User
+export default Post
