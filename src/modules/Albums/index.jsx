@@ -6,20 +6,20 @@ import axios from 'axios'
 import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Card from 'commons/ui-kit/Card'
 import Toast from 'commons/ui-kit/Toast'
-import { FETCH_POSTS_USER } from 'url/index'
+import { FETCH_ALBUMS_USER } from 'url/index'
 
-import fetchUserPost from './action'
+import fetchUserAlbum from './action'
 
 
-class Post extends Component {
+class Albums extends Component {
   static propTypes = {
-    postList: PropTypes.arrayOf(PropTypes.object),
+    albumList: PropTypes.arrayOf(PropTypes.object),
     validUntil: PropTypes.number,
     id: PropTypes.number
   }
 
   static defaultProps = {
-    postList: [],
+    albumList: [],
     validUntil: 0,
     id: -1
   }
@@ -46,7 +46,7 @@ class Post extends Component {
     const { userId } = this.props
     this.setState(this.loadingState)
     try {
-      const res = await axios({ method: "get", url: FETCH_POSTS_USER(userId) })
+      const res = await axios({ method: "get", url: FETCH_ALBUMS_USER(userId) })
       this.onDataFetched(res.data)
     } catch (e) {
       console.error(e);
@@ -54,7 +54,7 @@ class Post extends Component {
         isLoading: false,
         isError: true
       })
-      this.toggleShowToast('Failed to get user post', 'failed')
+      this.toggleShowToast('Failed to get user Albums', 'failed')
     }
   }
 
@@ -75,8 +75,8 @@ class Post extends Component {
   }
 
   onDataFetched = data => {
-    const { userId, fetchUserPost } = this.props
-    fetchUserPost(data, Date.now() + 300000, userId)
+    const { userId, fetchUserAlbum } = this.props
+    fetchUserAlbum(data, Date.now() + 300000, userId)
     this.setState({
       isLoading: false
     })
@@ -91,7 +91,7 @@ class Post extends Component {
 
   render() {
     const {
-      postList
+      albumList
     } = this.props
     const {
       showToast,
@@ -102,12 +102,13 @@ class Post extends Component {
     } = this.state
     return (
       <React.Fragment>
-        {postList.map((item, key) => (
+        {albumList.map((item, key) => (
           <Card
             key={key}
             data={item}
-            link={`post/${item.id}`}
-            type='lite'
+            width='250px'
+            onClick={undefined}
+            type='albums'
           />
         ))}
         {!isLoading && isError && (
@@ -119,12 +120,12 @@ class Post extends Component {
   }
 }
 
-const mapStateToProps = ({ post }) => ({
-  postList: post.data,
-  validUntil: post.valiUntil
+const mapStateToProps = ({ album }) => ({
+  albumList: album.data,
+  validUntil: album.valiUntil
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchUserPost: (data, validUntil, id) => dispatch(fetchUserPost(data, validUntil, id))
+  fetchUserAlbum: (data, validUntil, id) => dispatch(fetchUserAlbum(data, validUntil, id))
 })
-export default connect(mapStateToProps, mapDispatchToProps)(Post)
+export default connect(mapStateToProps, mapDispatchToProps)(Albums)

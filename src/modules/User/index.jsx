@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import Card from 'commons/ui-kit/Card'
+import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_USERS } from 'url/index'
 
+import CardUser from './Components/CardUser'
 import fetchUserList from './action'
 
 
@@ -40,8 +41,8 @@ class User extends Component {
   }
 
   fetchRemoteData = async () => {
-    console.log('kepanggil')
-    this.setState(this.defaultState)
+    this.setState(this.loadingState)
+    console.log(this.state)
     try {
       const res = await axios({ method: "get", url: FETCH_USERS })
       this.onDataFetched(res.data)
@@ -82,8 +83,8 @@ class User extends Component {
     })
   }
 
-  openPostPage = userId => () => {
-    window.location.pathname = `/post/${userId}`
+  openNewPage = (userId, page) => () => {
+    window.location.pathname = `user/${userId}/${page}`
   }
 
   componentDidMount() {
@@ -98,19 +99,26 @@ class User extends Component {
       userList
     } = this.props
     const {
-      showToast, type, msg
+      showToast,
+      type,
+      msg,
+      isLoading,
+      isError
     } = this.state
-    console.log(userList)
     return (
       <React.Fragment>
-        {userList.map((item, key) => (
-          <Card
+        {!isLoading && !isError && userList.map((item, key) => (
+          <CardUser
             key={key}
             data={item}
-            onClick={this.openPostPage(item.id)}
+            openPosts={`user/${item.id}/post`}
+            openAlbums={`user/${item.id}/album`}
             type='userCard'
           />
         ))}
+        {!isLoading && isError && (
+          <ErrorPage reFetch={this.fetchRemoteData} />
+        )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
     )

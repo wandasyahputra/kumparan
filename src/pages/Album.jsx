@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Posts from 'modules/Post'
+import Albums from 'modules/Albums'
 
-const Post = (props) => {
+const Album = (props) => {
   const Content = styled.div`
     color: ${props => props.theme.primaryTextColor};
   `
@@ -13,10 +13,10 @@ const Post = (props) => {
   `
   return (
     <Content>
-      <Title>Posts</Title>
-      <Posts userId={props.match.params.userid} />
+      <Title>Album</Title>
+      <Albums userId={props.match.params.userid} />
     </Content>
   )
 }
 
-export default Post
+export default Album
