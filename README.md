@@ -39,8 +39,6 @@ This function will show you post that create by selected user
 
 ## Todos
 
-* [ ] page album
-* [ ] showing comment
 * [ ] showing list photo
 * [ ] showing detail photo
 * [ ] add, edit, delete post
