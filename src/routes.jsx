@@ -5,6 +5,7 @@ import {
 
 import User from 'pages/User'
 import Post from 'pages/Post'
+import PostDetail from 'pages/PostDetail'
 import Album from 'pages/Album'
 
 const Routes = () => (
@@ -13,7 +14,7 @@ const Routes = () => (
       <Switch>
         <Route exact path="/user" component={User} />
         <Route exact path="/user/:userid/post" component={Post} />
-        <Route exact path="/user/:userid/post/:postid" component={Post} />
+        <Route exact path="/user/:userid/post/:postid" component={PostDetail} />
         <Route exact path="/user/:userid/album" component={Album} />
         <Redirect to="/user" />
       </Switch>
