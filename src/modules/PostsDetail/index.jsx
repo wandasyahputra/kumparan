@@ -4,30 +4,60 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 
 import Toast from 'commons/ui-kit/Toast'
-import { FETCH_POSTS_USER } from 'url/index'
+import ErrorPage from 'commons/ui-kit/ErrorPage'
+import {
+  FETCH_USERS_DETAIL,
+  FETCH_POSTS_DETAIL,
+  FETCH_POSTS_COMMENT
+} from 'url/index'
 
-import fetchUserPost from './action'
+import {
+  fetchPostDetail,
+  fetchUserDetail,
+  fetchDetailComments
+} from './action'
+
+import {
+  Container,
+  Comment,
+  Creator,
+  Title,
+  Body,
+} from './style'
 
 
 class PostDetail extends Component {
   static propTypes = {
     postDetail: PropTypes.arrayOf(PropTypes.object),
+    userDetail: PropTypes.objectOf(PropTypes.any),
     validUntil: PropTypes.number,
-    id: PropTypes.number
+    idPost: PropTypes.number,
+    idUser: PropTypes.number
   }
 
   static defaultProps = {
-    postList: [],
+    postDetail: [],
+    userDetail: {},
     validUntil: 0,
-    id: -1
+    id: null
   }
 
 
   constructor(props) {
     super(props)
     this.state = {
-      isLoading: false,
-      isError: false,
+      post: {
+        isLoading: false,
+        isError: false,
+      },
+      user: {
+        isLoading: false,
+        isError: false,
+      },
+      comments: {
+        isLoading: false,
+        isError: false,
+      },
       showToast: false,
       type: '',
       msg: ''
@@ -36,24 +66,79 @@ class PostDetail extends Component {
 
   loadingState = {
     isLoading: true,
-    isError: false,
-    showToast: false
+    isError: false
   }
 
-  fetchRemoteData = async () => {
-    const { userId } = this.props
-    console.log('kepanggil')
-    this.setState(this.defaultState)
+  fetchRemoteDataPost = async () => {
+    this.setState({ post:this.loadingState })
+    const { postId, postList } = this.props
+    const postDetail = postList.find((post)=>(
+      post.id === postId
+    ))
+    
+    if (postDetail) {
+      this.onDataFetched([postDetail], 'post')
+    } else {
+      try {
+        const res = await axios({ method: "get", url: FETCH_POSTS_DETAIL(postId) })
+        this.onDataFetched(res.data, 'post')
+      } catch (e) {
+        console.error(e);
+        this.setState({
+          post: {
+            isLoading: false,
+            isError: true
+          }
+        })
+        this.toggleShowToast('Failed to get user post', 'failed')
+      }
+    }
+  }
+  
+  fetchRemoteDataUser = async () => {
+    this.setState({ user:this.loadingState })
+    const { 
+      userId,
+      userList
+    } = this.props
+    const userDetail = userList.find((user)=>(
+      user.id === userId
+    ))
+    if (userDetail) {
+      this.onDataFetched(userDetail, 'user')
+    } else {
+      try {
+        const { userId } = this.props
+        const res = await axios({ method: "get", url: FETCH_USERS_DETAIL(userId) })
+        this.onDataFetched(res.data, 'user')
+      } catch (e) {
+        console.error(e);
+        this.setState({
+          user: {
+            isLoading: false,
+            isError: true
+          }
+        })
+        this.toggleShowToast('Failed to get user detail', 'failed')
+      }
+    }
+  }
+
+  fetchRemoteDataComment = async () => {
+    this.setState({ comments: this.loadingState })
     try {
-      const res = await axios({ method: "get", url: FETCH_POSTS_USER(userId) })
-      this.onDataFetched(res.data)
+      const { postId } = this.props
+      const res = await axios({ method: "get", url: FETCH_POSTS_COMMENT(postId) })
+      this.onDataFetched(res.data, 'comment')
     } catch (e) {
       console.error(e);
       this.setState({
-        isLoading: false,
-        isError: true
+        comments: {
+          isLoading: false,
+          isError: true
+        }
       })
-      this.toggleShowToast('Failed to get user post', 'failed')
+      this.toggleShowToast('Failed to get post comment', 'failed')
     }
   }
 
@@ -73,51 +158,103 @@ class PostDetail extends Component {
     })
   }
 
-  onDataFetched = data => {
-    const { userId, fetchUserPost } = this.props
-    fetchUserPost(data, Date.now() + 300000, userId)
+  onDataFetched = (data, type) => {
+    const {
+      postId,
+      fetchPostDetail,
+      fetchUserDetail,
+      fetchDetailComment
+    } = this.props
+    if (type === 'user') {
+      this.setState({
+        user: {
+          isLoading: false
+        }
+      })
+      return fetchUserDetail(data)
+    } else if (type === 'comment') {
+      this.setState({
+        comments: {
+          isLoading: false
+        }
+      })
+      return fetchDetailComment(data)
+    }
     this.setState({
-      isLoading: false
+      post: {
+        isLoading: false
+      }
     })
+    return fetchPostDetail(data, Date.now() + 300000, postId)
   }
 
   componentDidMount() {
-    const { validUntil } = this.props
-    if (validUntil < Date.now()) {
-      this.fetchRemoteData()
+    const { validUntil, id, postId } = this.props
+    if (validUntil < Date.now() || id !== postId) {
+      this.fetchRemoteDataPost()
+      this.fetchRemoteDataUser()
+      this.fetchRemoteDataComment()
     }
   }
 
   render() {
     const {
-      postList
+      postDetail,
+      userDetail,
+      comment
     } = this.props
     const {
-      showToast, type, msg
+      showToast, type, msg, user, post, comments
     } = this.state
+    console.log(this.props)
     return (
       <React.Fragment>
-        {postList.map((item, key) => (
-          <Card
-            key={key}
-            data={item}
-            // width='800px'
-            onClick={undefined}
-            type='lite'
-          />
-        ))}
-        {showToast && <Toast type={type} msg={msg} />}
+        <Container>
+          {!user.isLoading && !user.isError && (
+            <Creator>Create by {userDetail.name}</Creator>
+          )}
+          {user.isError && (
+            <ErrorPage reFetch={this.fetchRemoteDataUser} />
+          )}
+          {!post.isLoading && !user.isError && postDetail.map((item, key) => (
+            <React.Fragment>
+              <Title>{item.title}</Title>
+              <Body>{item.body}</Body>
+            </React.Fragment>
+          ))}
+          {post.isError && (
+            <ErrorPage reFetch={this.fetchRemoteDataPost} />
+          )}
+          Comment:
+          {!comments.isLoading && !comments.isError && comment.map((item,key) =>(
+            <Comment>
+              <div>{item.name}</div>
+              <div>{item.body}</div>
+            </Comment>
+          ))}
+          {comments.isError && (
+            <ErrorPage reFetch={this.fetchRemoteDataComment} />
+          )}
+          {showToast && <Toast type={type} msg={msg} />}
+        </Container>
       </React.Fragment>
     )
   }
 }
 
-const mapStateToProps = ({ post }) => ({
-  postList: post.data,
-  validUntil: post.valiUntil
+const mapStateToProps = ({ post, user, postDetail }) => ({
+  postList  : post.data,
+  userList  : user.data,
+  id        : post.id,
+  postDetail: postDetail.data,
+  userDetail: postDetail.user,
+  validUntil: postDetail.valiUntil,
+  comment   : postDetail.comment 
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchUserPost: (data, validUntil, id) => dispatch(fetchUserPost(data, validUntil, id))
+  fetchPostDetail: (data, validUntil, id) => dispatch(fetchPostDetail(data, validUntil, id)),
+  fetchDetailComment: (data) => dispatch(fetchDetailComments(data)),
+  fetchUserDetail: (data) => dispatch(fetchUserDetail(data)),
 })
 export default connect(mapStateToProps, mapDispatchToProps)(PostDetail)

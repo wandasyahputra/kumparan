@@ -1,19 +1,35 @@
-import { FETCH_POST } from './constant'
+import { FETCH_POST_DETAIL, FETCH_USER_DETAIL, FETCH_POST_COMMENTS } from './constant'
 
 
 const initialState = {
   data: [],
+  user: {},
+  comment: [],
   validUntil: 0,
   id: -1
 }
 
-const userPost = (state = initialState, action) => {
+const postDetail = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_POST: {
+    case FETCH_POST_DETAIL: {
       return {
+        ...state,
         data: action.data,
         validUntil: action.validUntil,
         id: action.id
+      }
+    }
+    case FETCH_POST_COMMENTS: {
+      console.log('sini', action)
+      return {
+        ...state,
+        comment: action.data
+      }
+    }
+    case FETCH_USER_DETAIL: {
+      return {
+        ...state,
+        user: action.data
       }
     }
     default: {
@@ -22,4 +38,4 @@ const userPost = (state = initialState, action) => {
   }
 }
 
-export default userPost
+export default postDetail
