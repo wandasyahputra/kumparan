@@ -3,23 +3,23 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Toast from 'commons/ui-kit/Toast'
-import { FETCH_USERS } from 'url/index'
+import { FETCH_POSTS_USER } from 'url/index'
 
-import CardUser from './Components/CardUser'
-import fetchUserList from './action'
+import fetchUserPost from './action'
 
 
-class User extends Component {
+class PostDetail extends Component {
   static propTypes = {
-    userList: PropTypes.arrayOf(PropTypes.object),
-    validUntil: PropTypes.number
+    postDetail: PropTypes.arrayOf(PropTypes.object),
+    validUntil: PropTypes.number,
+    id: PropTypes.number
   }
 
   static defaultProps = {
-    userList: [],
-    validUntil: 0
+    postList: [],
+    validUntil: 0,
+    id: -1
   }
 
 
@@ -41,10 +41,11 @@ class User extends Component {
   }
 
   fetchRemoteData = async () => {
-    this.setState(this.loadingState)
-    console.log(this.state)
+    const { userId } = this.props
+    console.log('kepanggil')
+    this.setState(this.defaultState)
     try {
-      const res = await axios({ method: "get", url: FETCH_USERS })
+      const res = await axios({ method: "get", url: FETCH_POSTS_USER(userId) })
       this.onDataFetched(res.data)
     } catch (e) {
       console.error(e);
@@ -52,7 +53,7 @@ class User extends Component {
         isLoading: false,
         isError: true
       })
-      this.toggleShowToast('Failed to get user data', 'failed')
+      this.toggleShowToast('Failed to get user post', 'failed')
     }
   }
 
@@ -72,19 +73,12 @@ class User extends Component {
     })
   }
 
-  /**
-   * insert data fetched to Redux
-   * @param {object} data data fetched from API
-   */
   onDataFetched = data => {
-    this.props.fetchUser(data, Date.now() + 300000)
+    const { userId, fetchUserPost } = this.props
+    fetchUserPost(data, Date.now() + 300000, userId)
     this.setState({
       isLoading: false
     })
-  }
-
-  openNewPage = (userId, page) => () => {
-    window.location.pathname = `user/${userId}/${page}`
   }
 
   componentDidMount() {
@@ -96,41 +90,34 @@ class User extends Component {
 
   render() {
     const {
-      userList
+      postList
     } = this.props
     const {
-      showToast,
-      type,
-      msg,
-      isLoading,
-      isError
+      showToast, type, msg
     } = this.state
     return (
       <React.Fragment>
-        {!isLoading && !isError && userList.map((item, key) => (
-          <CardUser
+        {postList.map((item, key) => (
+          <Card
             key={key}
             data={item}
-            openPosts={`user/${item.id}/post`}
-            openAlbums={`user/${item.id}/album`}
-            type='userCard'
+            // width='800px'
+            onClick={undefined}
+            type='lite'
           />
         ))}
-        {!isLoading && isError && (
-          <ErrorPage reFetch={this.fetchRemoteData} />
-        )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
     )
   }
 }
 
-const mapStateToProps = ({ user }) => ({
-  userList: user.data,
-  validUntil: user.valiUntil
+const mapStateToProps = ({ post }) => ({
+  postList: post.data,
+  validUntil: post.valiUntil
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchUser: (data, validUntil) => dispatch(fetchUserList(data, validUntil))
+  fetchUserPost: (data, validUntil, id) => dispatch(fetchUserPost(data, validUntil, id))
 })
-export default connect(mapStateToProps, mapDispatchToProps)(User)
+export default connect(mapStateToProps, mapDispatchToProps)(PostDetail)

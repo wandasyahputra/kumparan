@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 const BaseButton = styled.button`
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   font-size: 13px;
   font-weight: 500;

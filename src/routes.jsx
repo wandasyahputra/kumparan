@@ -2,26 +2,21 @@ import React from 'react'
 import {
   BrowserRouter as Router, Switch, Route, Redirect
 } from 'react-router-dom'
-import styled from 'styled-components'
 
 import User from 'pages/User'
 import Post from 'pages/Post'
-
-const Container = styled.div`
-  height: 100vh;
-  overflow: hidden;
-`
+import Album from 'pages/Album'
 
 const Routes = () => (
   <Router>
     <React.Fragment>
-      <Container>
-        <Switch>
-          <Route exact path="/user" component={User} />
-          <Route exact path="/post/:userid" component={Post} />
-          <Redirect to="/user" />
-        </Switch>
-      </Container>
+      <Switch>
+        <Route exact path="/user" component={User} />
+        <Route exact path="/user/:userid/post" component={Post} />
+        <Route exact path="/user/:userid/post/:postid" component={Post} />
+        <Route exact path="/user/:userid/album" component={Album} />
+        <Redirect to="/user" />
+      </Switch>
     </React.Fragment>
   </Router>
 )

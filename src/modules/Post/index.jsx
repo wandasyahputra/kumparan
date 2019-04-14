@@ -91,7 +91,8 @@ class Post extends Component {
 
   render() {
     const {
-      postList
+      postList,
+      userId
     } = this.props
     const {
       showToast, type, msg
@@ -102,8 +103,7 @@ class Post extends Component {
           <Card
             key={key}
             data={item}
-            width='800px'
-            onClick={undefined}
+            link={`user/${userId}/post/${item.id}`}
             type='lite'
           />
         ))}

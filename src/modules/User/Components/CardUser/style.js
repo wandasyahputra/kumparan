@@ -2,11 +2,12 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: inline-flex;
+  flex-direction: column;
   font-size: 13px;
   font-weight: 400;
   width: ${props => props.width || '250px'};
   margin: ${props => props.margin || '7px'};
-  min-height: ${props => props.height || '100px'};
+  min-height: ${props => props.height || '60px'};
   padding: 10px ${props => props.padding || '16px'};
   color: ${props => props.theme.primaryTextColor};
   background-color: ${props => props.theme.primaryBackground};
@@ -18,14 +19,25 @@ const Container = styled.div`
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   transition: 0.2s;
   
-  :hover {
+  &:hover {
     box-shadow: 0 0 5px 0 ${props => props.theme.primaryColorTrans};
     border: solid 0.5px ${props => props.theme.primaryColor};
   }
 
-  & > a {
+  & a {
     text-decoration: none;
     color: inherit
+  }
+
+  & > div {
+    display: inline-flex;
+    margin: 5px 0px;
+    &:last-of-type {
+      & > div {
+        flex-grow: 1;
+        text-align: center;
+      }
+    }
   }
 
   & .title {
