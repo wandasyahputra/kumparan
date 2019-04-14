@@ -3,17 +3,15 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import ErrorPage from 'commons/ui-kit/ErrorPage'
-import Card from 'commons/ui-kit/Card'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_POSTS_USER } from 'url/index'
 
 import fetchUserPost from './action'
 
 
-class Post extends Component {
+class PostDetail extends Component {
   static propTypes = {
-    postList: PropTypes.arrayOf(PropTypes.object),
+    postDetail: PropTypes.arrayOf(PropTypes.object),
     validUntil: PropTypes.number,
     id: PropTypes.number
   }
@@ -44,7 +42,8 @@ class Post extends Component {
 
   fetchRemoteData = async () => {
     const { userId } = this.props
-    this.setState(this.loadingState)
+    console.log('kepanggil')
+    this.setState(this.defaultState)
     try {
       const res = await axios({ method: "get", url: FETCH_POSTS_USER(userId) })
       this.onDataFetched(res.data)
@@ -91,15 +90,10 @@ class Post extends Component {
 
   render() {
     const {
-      postList,
-      userId
+      postList
     } = this.props
     const {
-      showToast,
-      type,
-      msg,
-      isLoading,
-      isError
+      showToast, type, msg
     } = this.state
     return (
       <React.Fragment>
@@ -107,13 +101,11 @@ class Post extends Component {
           <Card
             key={key}
             data={item}
-            link={`user/${userId}/post/${item.id}`}
+            // width='800px'
+            onClick={undefined}
             type='lite'
           />
         ))}
-        {!isLoading && isError && (
-          <ErrorPage reFetch={this.fetchRemoteData} />
-        )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
     )
@@ -128,4 +120,4 @@ const mapStateToProps = ({ post }) => ({
 const mapDispatchToProps = dispatch => ({
   fetchUserPost: (data, validUntil, id) => dispatch(fetchUserPost(data, validUntil, id))
 })
-export default connect(mapStateToProps, mapDispatchToProps)(Post)
+export default connect(mapStateToProps, mapDispatchToProps)(PostDetail)

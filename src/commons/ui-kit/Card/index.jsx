@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 import Container from './style'
 
@@ -19,31 +20,18 @@ const Card = (props) => {
   const {
     data,
     type,
+    link,
     ...rest
   } = props
 
-  if (type === 'userCard') {
-    return (
-      <Container {...rest} >
-        <div>
-          <div>Name </div>
-          <div>Username </div>
-          <div>City</div>
-        </div>
-        <div>
-          <div> {`: ${Cutter(data.name, 20)}`}</div>
-          <div> {`: ${Cutter(data.username, 20)}`}</div>
-          <div> {`: ${Cutter(data.address.city, 20)}`}</div>
-        </div>
-      </Container>
-    )
-  }
   return (
     <Container {...rest} >
-      <div>
-        <div className="title">{data.title} </div>
-        <div>{data.body} </div>
-      </div>
+      <Link to={link}>
+        <div>
+          <div className="title">{Cutter(data.title, 40)}</div>
+          <div>{Cutter(data.body || '', 100)} </div>
+        </div>
+      </Link>
     </Container>
   )
 }
