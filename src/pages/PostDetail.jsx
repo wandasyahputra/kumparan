@@ -9,7 +9,10 @@ const PostDetail = (props) => {
   `
   return (
     <Content>
-      <PostsDetail userId={props.match.params.userid} postId={props.match.params.postid} />
+      <PostsDetail 
+        userId={props.match.params.userid}
+        postId={props.match.params.postid}
+      />
     </Content>
   )
 }

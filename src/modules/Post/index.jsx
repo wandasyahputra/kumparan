@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
+import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Card from 'commons/ui-kit/Card'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_POSTS_USER } from 'url/index'
@@ -43,8 +44,7 @@ class Post extends Component {
 
   fetchRemoteData = async () => {
     const { userId } = this.props
-    console.log('kepanggil')
-    this.setState(this.defaultState)
+    this.setState(this.loadingState)
     try {
       const res = await axios({ method: "get", url: FETCH_POSTS_USER(userId) })
       this.onDataFetched(res.data)
@@ -95,7 +95,11 @@ class Post extends Component {
       userId
     } = this.props
     const {
-      showToast, type, msg
+      showToast,
+      type,
+      msg,
+      isLoading,
+      isError
     } = this.state
     return (
       <React.Fragment>
@@ -107,6 +111,9 @@ class Post extends Component {
             type='lite'
           />
         ))}
+        {!isLoading && isError && (
+          <ErrorPage reFetch={this.fetchRemoteData} />
+        )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
     )

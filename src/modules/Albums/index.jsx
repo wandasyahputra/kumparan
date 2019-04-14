@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
+import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Card from 'commons/ui-kit/Card'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_ALBUMS_USER } from 'url/index'
@@ -43,7 +44,7 @@ class Albums extends Component {
 
   fetchRemoteData = async () => {
     const { userId } = this.props
-    this.setState(this.defaultState)
+    this.setState(this.loadingState)
     try {
       const res = await axios({ method: "get", url: FETCH_ALBUMS_USER(userId) })
       this.onDataFetched(res.data)
@@ -93,7 +94,11 @@ class Albums extends Component {
       albumList
     } = this.props
     const {
-      showToast, type, msg
+      showToast,
+      type,
+      msg,
+      isLoading,
+      isError
     } = this.state
     return (
       <React.Fragment>
@@ -106,6 +111,9 @@ class Albums extends Component {
             type='albums'
           />
         ))}
+        {!isLoading && isError && (
+          <ErrorPage reFetch={this.fetchRemoteData} />
+        )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
     )
